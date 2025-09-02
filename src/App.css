@@ -92,13 +92,23 @@ button{
 .how{
     display: flex;
     flex-direction: column;
-    height: 300px;
+    height: 100px;
     align-items: center;
 }
 
 .how p{
     margin-top: 10px;
 }
+.steps{
+    display: flex;
+    justify-content: space-around;
+    height: 250px;
+}
+.icon{
+    font-size: 25px;
+    
+}
+
 .footers{
     display: flex;
     height: 200px;

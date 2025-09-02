@@ -36,6 +36,37 @@ function App() {
           <h2>How Sahayog Works</h2>
           <p>Simple steps to get medical help or support others</p>
         </div>
+        <div className="steps">
+          <div className="box">
+            <div className="icon">
+              <i class="fa-solid fa-plus"></i>
+            </div>
+            <h4 style={{marginLeft:'-50px'}}>Create Your Campaign</h4>
+            <p style={{maxWidth:'200px' , marginLeft:'-50px'}}>Share your medical story, upload relevant documents, and include your payment details (bank account) for direct donations.</p>
+          </div>
+          <div className="box">
+            <div className="icon">
+            <i class="fa-solid fa-share-nodes"></i>
+            </div>
+            <h4 style={{marginLeft:'-50px'}}>Share Your Story</h4>
+            <p style={{maxWidth:'200px' , marginLeft:'-50px'}}>Spread the word through social media. The more people who know, the better your chances of success.</p>
+          </div>
+          <div className="box">
+            <div className="icon">
+            <i class="fa-solid fa-heart"></i>
+            </div>
+            <h4 style={{marginLeft:'-50px'}}>Receive Direct Support</h4>
+            <p style={{maxWidth:'200px' , marginLeft:'-50px'}}>Donors contribute directly to your provided payment methods. Track your progress and thank your supporters personally.</p>
+            </div>
+          <div className="box">
+            <div className="icon">
+            <i class="fa-solid fa-hospital"></i>
+            </div>
+            <h4 style={{marginLeft:'-50px'}}>Get the Care You Need</h4>
+            <p style={{maxWidth:'200px' , marginLeft:'-50px'}}>Use the funds for your medical treatment and keep supporters updated on your progress and recovery journey.</p>
+            </div>
+        </div>
+        
         <footer>
           <div className="footers">
             <div className="footer-section">
