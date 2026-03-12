@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{TITLE}} — Sahayog</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <div id="navbar-placeholder"></div>
+
+  <div class="campaign-detail-page">
+    <div class="campaign-detail">
+      <div class="campaign-header">
+        <h1>{{TITLE}}</h1>
+        <p class="campaign-meta">Created by {{CREATOR}} · {{DATE}}</p>
+      </div>
+
+      <div class="campaign-images-wrap">
+        {{IMAGES}}
+      </div>
+
+      <div class="campaign-body">
+
+        <!-- Stats row (goal / raised) -->
+        <div id="stats-container">
+          {{STATS}}
+          {{PROGRESS}}
+        </div>
+
+        <p class="campaign-description">{{DESCRIPTION}}</p>
+
+        <div class="campaign-actions">
+          <a href="/browse" class="btn btn-outline">← Back to Browse</a>
+          <div id="admin-actions" style="display:none">
+            <form action="/campaign/{{ID}}/delete" method="POST" onsubmit="return confirm('Delete this campaign permanently?')">
+              <button type="submit" class="btn btn-danger">🗑 Delete Campaign</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/navbar.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const u = window.__USER__ || {};
+      if (u.role === 'admin') {
+        document.getElementById('admin-actions').style.display = '';
+      }
+      // Hide empty stats container if no stats
+      const sc = document.getElementById('stats-container');
+      if (!sc.textContent.trim()) sc.style.display = 'none';
+    });
+  </script>
+</body>
+</html>

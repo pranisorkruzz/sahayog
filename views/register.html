@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account — Sahayog</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <div id="navbar-placeholder"></div>
+
+  <div class="auth-page">
+    <div class="auth-card">
+      <h2>Create your account</h2>
+      <p class="auth-sub">Join Sahayog and start making a difference</p>
+
+      <div id="alert-exists" class="alert alert-error" style="display:none">
+        An account with this email already exists. <a href="/login">Log in instead?</a>
+      </div>
+
+      <form action="/register" method="POST" novalidate id="reg-form">
+        <div class="form-group">
+          <label for="name">Full name</label>
+          <input type="text" id="name" name="name" placeholder="Rahul Sharma" required />
+          <div class="error-msg" id="name-err"></div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="rahul@example.com" required />
+          <div class="error-msg" id="email-err"></div>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Min. 8 characters" required />
+          <div class="error-msg" id="pass-err"></div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:8px;">Create Account</button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="/login">Log in</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/navbar.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    if (params.get('error') === 'exists') document.getElementById('alert-exists').style.display = '';
+
+    const form = document.getElementById('reg-form');
+    const fields = {
+      name: {
+        el: document.getElementById('name'),
+        errEl: document.getElementById('name-err'),
+        validate(v) {
+          if (!v) return 'Name is required.';
+          if (v.length < 2) return 'Name must be at least 2 characters.';
+        }
+      },
+      email: {
+        el: document.getElementById('email'),
+        errEl: document.getElementById('email-err'),
+        validate(v) {
+          if (!v) return 'Email is required.';
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Enter a valid email.';
+        }
+      },
+      password: {
+        el: document.getElementById('password'),
+        errEl: document.getElementById('pass-err'),
+        validate(v) {
+          if (!v) return 'Password is required.';
+          if (v.length < 8) return 'Password must be at least 8 characters.';
+        }
+      }
+    };
+
+    function validateField(key) {
+      const f = fields[key];
+      const val = f.el.value.trim();
+      const msg = f.validate(val);
+      f.errEl.textContent = msg || '';
+      f.el.classList.toggle('is-error', !!msg);
+      f.el.classList.toggle('is-success', !msg && val.length > 0);
+      return !msg;
+    }
+
+    Object.keys(fields).forEach(k => {
+      fields[k].el.addEventListener('blur', () => validateField(k));
+      fields[k].el.addEventListener('input', () => {
+        if (fields[k].el.classList.contains('is-error')) validateField(k);
+      });
+    });
+
+    form.addEventListener('submit', (e) => {
+      const allOk = Object.keys(fields).map(k => validateField(k)).every(Boolean);
+      if (!allOk) e.preventDefault();
+    });
+  </script>
+</body>
+</html>

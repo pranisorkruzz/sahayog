@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Start a Campaign — Sahayog</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="create-page">
+      <div class="create-card">
+        <h1>Start a Campaign</h1>
+        <p class="sub">
+          Tell your story clearly. Our team will review and approve it within 24
+          hours.
+        </p>
+
+        <form
+          action="/create"
+          method="POST"
+          enctype="multipart/form-data"
+          novalidate
+          id="create-form"
+        >
+          <div class="form-group">
+            <label for="title"
+              >Campaign Title <span style="color: var(--red)">*</span></label
+            >
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="e.g. Help Devraj with his bone marrow cancer treatment"
+            />
+            <div class="error-msg" id="title-err"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="goal_amount">Fundraising Goal (₹)</label>
+            <input
+              type="number"
+              id="goal_amount"
+              name="goal_amount"
+              placeholder="e.g. 150000"
+              min="100"
+            />
+            <div class="error-msg" id="goal-err"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="description"
+              >Your Story <span style="color: var(--red)">*</span></label
+            >
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Explain who this campaign is for, why you need help, and how the funds will be used…"
+              style="min-height: 160px"
+            ></textarea>
+            <div class="error-msg" id="desc-err"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Supporting Documents / Images</label>
+            <div class="file-upload-wrap">
+              <div class="file-upload-area" id="drop-zone">
+                <div style="font-size: 2rem">📎</div>
+                <p><strong>Click to upload</strong> or drag & drop</p>
+                <p>
+                  Medical bills, certificates, ID proof, photos (up to 10 files
+                  · 5 MB each)
+                </p>
+                <input
+                  type="file"
+                  name="documents"
+                  multiple
+                  accept="image/*,.pdf"
+                  id="file-input"
+                />
+              </div>
+            </div>
+            <div
+              id="file-preview"
+              style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px"
+            ></div>
+            <div class="error-msg" id="file-err"></div>
+          </div>
+
+          <div class="info-box">
+            ⏳ After submission, an admin will review your documents and approve
+            or decline the campaign within 24 hours. You can track the status in
+            <a
+              href="/my-campaigns"
+              style="color: var(--green-dark); font-weight: 600"
+              >My Campaigns</a
+            >.
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            style="width: 100%; margin-top: 24px"
+          >
+            Submit for Review
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="/js/navbar.js"></script>
+    <script>
+      // File preview
+      const fileInput = document.getElementById("file-input");
+      const preview = document.getElementById("file-preview");
+      const dropZone = document.getElementById("drop-zone");
+
+      fileInput.addEventListener("change", updatePreview);
+
+      function updatePreview() {
+        preview.innerHTML = "";
+        [...fileInput.files].forEach((f) => {
+          const chip = document.createElement("div");
+          chip.style.cssText =
+            "background:var(--green-light);border:1px solid var(--green-mid);border-radius:8px;padding:6px 12px;font-size:.78rem;color:var(--green-dark);font-weight:600;";
+          chip.textContent =
+            f.name.length > 24 ? f.name.substring(0, 22) + "…" : f.name;
+          preview.appendChild(chip);
+        });
+      }
+
+      // Drag & drop visual
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = "var(--green)";
+      });
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.style.borderColor = "";
+      });
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = "";
+        fileInput.files = e.dataTransfer.files;
+        updatePreview();
+      });
+
+      // Validation
+      const form = document.getElementById("create-form");
+      form.addEventListener("submit", (e) => {
+        let ok = true;
+
+        const title = document.getElementById("title");
+        const titleErr = document.getElementById("title-err");
+        titleErr.textContent = "";
+        title.classList.remove("is-error");
+        if (!title.value.trim()) {
+          titleErr.textContent = "Campaign title is required.";
+          title.classList.add("is-error");
+          ok = false;
+        } else if (title.value.trim().length < 5) {
+          titleErr.textContent = "Title must be at least 5 characters.";
+          title.classList.add("is-error");
+          ok = false;
+        }
+
+        const desc = document.getElementById("description");
+        const descErr = document.getElementById("desc-err");
+        descErr.textContent = "";
+        desc.classList.remove("is-error");
+        if (!desc.value.trim()) {
+          descErr.textContent = "Please describe your campaign.";
+          desc.classList.add("is-error");
+          ok = false;
+        } else if (desc.value.trim().length < 30) {
+          descErr.textContent = "Description must be at least 30 characters.";
+          desc.classList.add("is-error");
+          ok = false;
+        }
+
+        const goal = document.getElementById("goal_amount");
+        const goalErr = document.getElementById("goal-err");
+        goalErr.textContent = "";
+        if (goal.value && Number(goal.value) < 100) {
+          goalErr.textContent = "Goal must be at least ₹100.";
+          goal.classList.add("is-error");
+          ok = false;
+        }
+
+        if (!ok) e.preventDefault();
+      });
+    </script>
+  </body>
+</html>

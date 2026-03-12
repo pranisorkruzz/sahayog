@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Campaigns — Sahayog</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <div id="navbar-placeholder"></div>
+
+  <div class="my-campaigns-page">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 style="font-size:1.5rem;font-weight:800;">My Campaigns</h1>
+        <p style="color:var(--muted);font-size:.88rem;margin-top:4px;">Track the status of your submitted campaigns.</p>
+      </div>
+      <a href="/create" class="btn btn-primary">+ New Campaign</a>
+    </div>
+
+    <div class="card-container">
+      <div class="card-header">
+        <h2>Campaign History</h2>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Status</th>
+              <th>Admin Note</th>
+              <th>Submitted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ROWS}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:24px;">
+      💡 <strong>Pending</strong> campaigns are under review. <strong>Approved</strong> campaigns are live on the browse page. <strong>Declined</strong> campaigns need revision — check the admin note for feedback.
+    </div>
+  </div>
+
+  <script src="/js/navbar.js"></script>
+</body>
+</html>
