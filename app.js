@@ -33,7 +33,7 @@ app.use(
     secret: "sahayog-secret",
     resave: false,
     saveUninitialized: false,
-  })
+  }),
 );
 
 // ---------------------------
@@ -44,7 +44,13 @@ const storage = multer.diskStorage({
     cb(null, "public/uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + Math.round(Math.random() * 1e9) + path.extname(file.originalname));
+    cb(
+      null,
+      Date.now() +
+        "-" +
+        Math.round(Math.random() * 1e9) +
+        path.extname(file.originalname),
+    );
   },
 });
 const upload = multer({ storage });
@@ -53,7 +59,8 @@ const upload = multer({ storage });
 // Auth & Role helpers
 // ---------------------------
 function isLoggedIn(req, res, next) {
-  if (!req.session.userId) return res.redirect("/login?next=" + encodeURIComponent(req.originalUrl));
+  if (!req.session.userId)
+    return res.redirect("/login?next=" + encodeURIComponent(req.originalUrl));
   next();
 }
 
@@ -79,7 +86,10 @@ function renderPage(filePath, req, res, extras = {}) {
     name: req.session.userName || null,
     role: req.session.role || null,
   });
-  html = html.replace("</head>", `  <script>window.__USER__ = ${userPayload};</script>\n</head>`);
+  html = html.replace(
+    "</head>",
+    `  <script>window.__USER__ = ${userPayload};</script>\n</head>`,
+  );
 
   res.send(html);
 }
@@ -100,18 +110,23 @@ app.get("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const next = req.query.next || "/";
-  db.query("SELECT * FROM users WHERE email = ?", [email], async (err, results) => {
-    if (err || results.length === 0) return res.redirect("/login?error=invalid");
-    const user = results[0];
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.redirect("/login?error=invalid");
-    req.session.userId = user.id;
-    req.session.userName = user.name;
-    req.session.role = user.role;
-    // redirect to admin panel if admin
-    if (user.role === "admin") return res.redirect("/admin");
-    res.redirect(next);
-  });
+  db.query(
+    "SELECT * FROM users WHERE email = ?",
+    [email],
+    async (err, results) => {
+      if (err || results.length === 0)
+        return res.redirect("/login?error=invalid");
+      const user = results[0];
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) return res.redirect("/login?error=invalid");
+      req.session.userId = user.id;
+      req.session.userName = user.name;
+      req.session.role = user.role;
+      // redirect to admin panel if admin
+      if (user.role === "admin") return res.redirect("/admin");
+      res.redirect(next);
+    },
+  );
 });
 
 app.post("/register", async (req, res) => {
@@ -123,7 +138,7 @@ app.post("/register", async (req, res) => {
     (err) => {
       if (err) return res.redirect("/register?error=exists");
       res.redirect("/login?registered=1");
-    }
+    },
   );
 });
 
@@ -150,7 +165,10 @@ app.get("/browse", (req, res) => {
     ORDER BY c.id DESC
   `;
   db.query(sql, (err, results) => {
-    if (err) { console.error(err); return res.send("Database error"); }
+    if (err) {
+      console.error(err);
+      return res.send("Database error");
+    }
 
     let campaignsHTML = "";
     if (results.length === 0) {
@@ -158,9 +176,16 @@ app.get("/browse", (req, res) => {
     } else {
       results.forEach((c) => {
         const images = c.images ? JSON.parse(c.images) : [];
-        const thumb = images.length > 0 ? `/uploads/${images[0]}` : "/images/placeholder.svg";
-        const goal = c.goal_amount ? `<span class="goal">Goal: ₹${Number(c.goal_amount).toLocaleString()}</span>` : "";
-        const pct = c.goal_amount ? Math.min(100, Math.round((c.raised_amount / c.goal_amount) * 100)) : 0;
+        const thumb =
+          images.length > 0
+            ? `/uploads/${images[0]}`
+            : "/images/placeholder.svg";
+        const goal = c.goal_amount
+          ? `<span class="goal">Goal: ₹${Number(c.goal_amount).toLocaleString()}</span>`
+          : "";
+        const pct = c.goal_amount
+          ? Math.min(100, Math.round((c.raised_amount / c.goal_amount) * 100))
+          : 0;
         const progress = c.goal_amount
           ? `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><p class="progress-label">₹${Number(c.raised_amount || 0).toLocaleString()} raised · ${pct}%</p>`
           : "";
@@ -180,7 +205,9 @@ app.get("/browse", (req, res) => {
       });
     }
 
-    renderPage(path.join(__dirname, "views/browse.html"), req, res, { CAMPAIGNS: campaignsHTML });
+    renderPage(path.join(__dirname, "views/browse.html"), req, res, {
+      CAMPAIGNS: campaignsHTML,
+    });
   });
 });
 
@@ -194,12 +221,23 @@ app.get("/campaign/:id", (req, res) => {
       const c = results[0];
       const images = c.images ? JSON.parse(c.images) : [];
       let imagesHTML = images.length
-        ? images.map((img) => `<img src="/uploads/${img}" alt="Campaign image" />`).join("")
+        ? images
+            .map((img) => `<img src="/uploads/${img}" alt="Campaign image" />`)
+            .join("")
         : `<div class="no-image">No images uploaded</div>`;
 
-      const goal = c.goal_amount ? `<div class="stat"><span class="stat-label">Goal</span><span class="stat-value">₹${Number(c.goal_amount).toLocaleString()}</span></div>` : "";
-      const raised = c.goal_amount ? `<div class="stat"><span class="stat-label">Raised</span><span class="stat-value">₹${Number(c.raised_amount || 0).toLocaleString()}</span></div>` : "";
-      const pct = c.goal_amount ? Math.min(100, Math.round(((c.raised_amount || 0) / c.goal_amount) * 100)) : 0;
+      const goal = c.goal_amount
+        ? `<div class="stat"><span class="stat-label">Goal</span><span class="stat-value">₹${Number(c.goal_amount).toLocaleString()}</span></div>`
+        : "";
+      const raised = c.goal_amount
+        ? `<div class="stat"><span class="stat-label">Raised</span><span class="stat-value">₹${Number(c.raised_amount || 0).toLocaleString()}</span></div>`
+        : "";
+      const pct = c.goal_amount
+        ? Math.min(
+            100,
+            Math.round(((c.raised_amount || 0) / c.goal_amount) * 100),
+          )
+        : 0;
       const progress = c.goal_amount
         ? `<div class="progress-bar large"><div class="progress-fill" style="width:${pct}%"></div></div><p class="progress-pct">${pct}% funded</p>`
         : "";
@@ -212,9 +250,13 @@ app.get("/campaign/:id", (req, res) => {
         CREATOR: c.creator || "Anonymous",
         STATS: goal + raised,
         PROGRESS: progress,
-        DATE: new Date(c.created_at).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" }),
+        DATE: new Date(c.created_at).toLocaleDateString("en-IN", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
       });
-    }
+    },
   );
 });
 
@@ -230,11 +272,20 @@ app.post("/create", isLoggedIn, upload.array("documents", 10), (req, res) => {
   const files = req.files.map((f) => f.filename);
   db.query(
     "INSERT INTO campaigns (user_id, title, description, images, goal_amount, status) VALUES (?, ?, ?, ?, ?, 'pending')",
-    [req.session.userId, title, description, JSON.stringify(files), goal_amount || null],
+    [
+      req.session.userId,
+      title,
+      description,
+      JSON.stringify(files),
+      goal_amount || null,
+    ],
     (err) => {
-      if (err) { console.error(err); return res.send("Database error"); }
+      if (err) {
+        console.error(err);
+        return res.send("Database error");
+      }
       res.redirect("/my-campaigns");
-    }
+    },
   );
 });
 
@@ -247,7 +298,12 @@ app.get("/my-campaigns", isLoggedIn, (req, res) => {
       if (err) return res.send("Database error");
       let rows = "";
       results.forEach((c) => {
-        const statusClass = { pending: "badge-pending", approved: "badge-approved", declined: "badge-declined" }[c.status] || "";
+        const statusClass =
+          {
+            pending: "badge-pending",
+            approved: "badge-approved",
+            declined: "badge-declined",
+          }[c.status] || "";
         rows += `<tr>
           <td>${c.title}</td>
           <td><span class="badge ${statusClass}">${c.status}</span></td>
@@ -255,8 +311,12 @@ app.get("/my-campaigns", isLoggedIn, (req, res) => {
           <td>${new Date(c.created_at).toLocaleDateString("en-IN")}</td>
         </tr>`;
       });
-      renderPage(path.join(__dirname, "views/my-campaigns.html"), req, res, { ROWS: rows || `<tr><td colspan="4" class="empty-row">No campaigns yet.</td></tr>` });
-    }
+      renderPage(path.join(__dirname, "views/my-campaigns.html"), req, res, {
+        ROWS:
+          rows ||
+          `<tr><td colspan="4" class="empty-row">No campaigns yet.</td></tr>`,
+      });
+    },
   );
 });
 
@@ -276,10 +336,21 @@ app.get("/admin", isLoggedIn, isAdmin, (req, res) => {
 
       function buildRow(c) {
         const images = c.images ? JSON.parse(c.images) : [];
-        const docs = images.map((img) => `<a href="/uploads/${img}" target="_blank" class="doc-link">📄 View</a>`).join(" ");
-        const statusClass = { pending: "badge-pending", approved: "badge-approved", declined: "badge-declined" }[c.status] || "";
-        const actions = c.status === "pending"
-          ? `<form class="admin-action" method="POST" action="/admin/campaign/${c.id}/approve">
+        const docs = images
+          .map(
+            (img) =>
+              `<a href="/uploads/${img}" target="_blank" class="doc-link">📄 View</a>`,
+          )
+          .join(" ");
+        const statusClass =
+          {
+            pending: "badge-pending",
+            approved: "badge-approved",
+            declined: "badge-declined",
+          }[c.status] || "";
+        const actions =
+          c.status === "pending"
+            ? `<form class="admin-action" method="POST" action="/admin/campaign/${c.id}/approve">
                <input type="text" name="note" placeholder="Optional note…" class="admin-note-input" />
                <button type="submit" class="btn-approve">✓ Approve</button>
              </form>
@@ -287,7 +358,13 @@ app.get("/admin", isLoggedIn, isAdmin, (req, res) => {
                <input type="text" name="note" placeholder="Reason for decline…" class="admin-note-input" />
                <button type="submit" class="btn-decline">✕ Decline</button>
              </form>`
-          : `<span class="badge ${statusClass}">${c.status}</span>${c.admin_note ? `<br><small>${c.admin_note}</small>` : ""}`;
+            : `<div style="display:flex;flex-direction:column;gap:8px;">
+            <span class="badge ${statusClass}">${c.status}</span>
+            ${c.admin_note ? `<small style="color:#6b7280">${c.admin_note}</small>` : ""}
+            <form method="POST" action="/admin/campaign/${c.id}/delete" onsubmit="return confirm('Delete this campaign permanently?')">
+            <button type="submit" class="btn-decline" style="font-size:.75rem;padding:5px 12px;">🗑 Delete</button>
+            </form>
+            </div>`;
 
         return `<tr>
           <td><strong>${c.title}</strong><br><small>${c.creator || "?"} · ${c.creator_email || ""}</small></td>
@@ -298,15 +375,19 @@ app.get("/admin", isLoggedIn, isAdmin, (req, res) => {
         </tr>`;
       }
 
-      const pendingRows = pending.map(buildRow).join("") || `<tr><td colspan="5" class="empty-row">No pending campaigns 🎉</td></tr>`;
-      const otherRows = others.map(buildRow).join("") || `<tr><td colspan="5" class="empty-row">No reviewed campaigns yet.</td></tr>`;
+      const pendingRows =
+        pending.map(buildRow).join("") ||
+        `<tr><td colspan="5" class="empty-row">No pending campaigns 🎉</td></tr>`;
+      const otherRows =
+        others.map(buildRow).join("") ||
+        `<tr><td colspan="5" class="empty-row">No reviewed campaigns yet.</td></tr>`;
 
       renderPage(path.join(__dirname, "views/admin.html"), req, res, {
         PENDING_ROWS: pendingRows,
         OTHER_ROWS: otherRows,
         PENDING_COUNT: pending.length,
       });
-    }
+    },
   );
 });
 
@@ -315,7 +396,7 @@ app.post("/admin/campaign/:id/approve", isLoggedIn, isAdmin, (req, res) => {
   db.query(
     "UPDATE campaigns SET status = 'approved', admin_note = ? WHERE id = ?",
     [note || null, req.params.id],
-    () => res.redirect("/admin")
+    () => res.redirect("/admin"),
   );
 });
 
@@ -324,11 +405,21 @@ app.post("/admin/campaign/:id/decline", isLoggedIn, isAdmin, (req, res) => {
   db.query(
     "UPDATE campaigns SET status = 'declined', admin_note = ? WHERE id = ?",
     [note || null, req.params.id],
-    () => res.redirect("/admin")
+    () => res.redirect("/admin"),
   );
 });
-
+app.post("/admin/campaign/:id/delete", isLoggedIn, isAdmin, (req, res) => {
+  db.query("DELETE FROM campaigns WHERE id = ?", [req.params.id], (err) => {
+    if (err) {
+      console.error(err);
+      return res.send("Delete failed");
+    }
+    res.redirect("/admin");
+  });
+});
 // ---------------------------
 // Start server
 // ---------------------------
-app.listen(3000, () => console.log("✅ Sahayog running → http://localhost:3000"));
+app.listen(3000, () =>
+  console.log("✅ Sahayog running → http://localhost:3000"),
+);

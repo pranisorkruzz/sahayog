@@ -1,70 +1,69 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Panel — Sahayog</title>
-  <link rel="stylesheet" href="/css/styles.css" />
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel — Sahayog</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div id="navbar-placeholder"></div>
 
-  <div id="navbar-placeholder"></div>
-
-  <div class="admin-page">
-    <div class="admin-header">
-      <div>
-        <h1>⚙ Admin Panel</h1>
-        <p class="sub">Review, approve, or decline submitted campaigns.</p>
+    <div class="admin-page">
+      <div class="admin-header">
+        <div>
+          <h1>⚙ Admin Panel</h1>
+          <p class="sub">Review, approve, or decline submitted campaigns.</p>
+        </div>
+        <a href="/browse" class="btn btn-outline btn-sm">View Live Site →</a>
       </div>
-      <a href="/browse" class="btn btn-outline btn-sm">View Live Site →</a>
+
+      <!-- Pending campaigns -->
+      <div class="admin-section">
+        <div class="admin-section-title">
+          Pending Review
+          <span class="count-bubble">{{PENDING_COUNT}}</span>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Campaign / Creator</th>
+                <th>Description Preview</th>
+                <th>Documents</th>
+                <th>Submitted</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{PENDING_ROWS}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Reviewed campaigns -->
+      <div class="admin-section">
+        <div class="admin-section-title">Previously Reviewed</div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Campaign / Creator</th>
+                <th>Description Preview</th>
+                <th>Documents</th>
+                <th>Submitted</th>
+                <th>Status / Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{OTHER_ROWS}}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
-    <!-- Pending campaigns -->
-    <div class="admin-section">
-      <div class="admin-section-title">
-        Pending Review
-        <span class="count-bubble">{{PENDING_COUNT}}</span>
-      </div>
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Campaign / Creator</th>
-              <th>Description Preview</th>
-              <th>Documents</th>
-              <th>Submitted</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{PENDING_ROWS}}
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Reviewed campaigns -->
-    <div class="admin-section">
-      <div class="admin-section-title">Previously Reviewed</div>
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Campaign / Creator</th>
-              <th>Description Preview</th>
-              <th>Documents</th>
-              <th>Submitted</th>
-              <th>Status / Note</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{OTHER_ROWS}}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <script src="/js/navbar.js"></script>
-</body>
+    <script src="/js/navbar.js"></script>
+  </body>
 </html>
